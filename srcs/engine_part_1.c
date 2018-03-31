@@ -6,7 +6,7 @@
 /*   By: afarapon <afarapon@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/30 18:51:30 by afarapon          #+#    #+#             */
-/*   Updated: 2018/03/31 09:52:42 by afarapon         ###   ########.fr       */
+/*   Updated: 2018/03/31 10:33:10 by afarapon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,24 +15,27 @@
 int				ft_all_strcmp(char *s1, char *s2)
 {
 	size_t		i;
-	char		r1[NAME_SIZE];
-	char		r2[NAME_SIZE];
+	char		*r1;
+	char		*r2;
+	size_t		len;
+	int			res;
 
 	i = -1;
-	while (++i < NAME_SIZE)
-		if (s1[i] >= 'A' && s1[i] <= 'Z')
-			r1[i] = ft_tolower(s1[i]);
-		else
-			r1[i] = s1[i];
-	r1[i] = '\0';
+	r1 = ft_strdup(s1);
+	r2 = ft_strdup(s2);
+	len = ft_strlen(r1);
+	while (++i < len)
+		if (r1[i] >= 'A' && r1[i] <= 'Z')
+			r1[i] = ft_tolower(r1[i]);
 	i = -1;
-	while (++i < NAME_SIZE)
-		if (s2[i] >= 'A' && s2[i] <= 'Z')
-			r2[i] = ft_tolower(s2[i]);
-		else
-			r2[i] = s2[i];
-	r2[i] = '\0';
-	return (ft_strcmp(r1, r2));
+	len = ft_strlen(r2);
+	while (++i < len)
+		if (r2[i] >= 'A' && r2[i] <= 'Z')
+			r2[i] = ft_tolower(r2[i]);
+	res = ft_strcmp(r1, r2);
+	free(r1);
+	free(r2);
+	return (res);
 }
 
 void			sort_by_name_array(t_info *arr, unsigned int size)
@@ -78,10 +81,13 @@ static void		files_print(t_info file, t_flags *fl, t_localinfo *local)
 	}
 }
 
-static void		directories_print(t_info file, t_flags *fl, t_localinfo *local)
+void			directories_print(t_info file, t_flags *fl, t_localinfo *local)
 {
 	if (S_ISDIR(file.f_stat.st_mode))
-		open_and_print_dir(file.name, fl);
+	{
+		ft_printf("Dir %s\n", file.name);
+		open_and_print_dir(file.name, fl, local->files_size == 1 ? 1 : 0);
+	}
 }
 
 static int		check_for_files(t_localinfo *l)
@@ -109,13 +115,7 @@ void			run_ls_att(t_localinfo *local)
 		ft_printf("\n");
 	i = -1;
 	while (++i < local->files_size)
-	{
-		if (i > 0)
-			ft_printf("\n");
-		if (local->files_size != 1)
-			ft_printf(COLOR_RESET "%s:\n", local->files[i].name);
 		directories_print(local->files[i], &local->flags, local);
-	}
 	free(local->loc_path);
 	free(local->files);
 }

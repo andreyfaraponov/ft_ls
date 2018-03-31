@@ -6,7 +6,7 @@
 /*   By: afarapon <afarapon@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 21:32:41 by afarapon          #+#    #+#             */
-/*   Updated: 2018/03/31 09:18:17 by afarapon         ###   ########.fr       */
+/*   Updated: 2018/03/31 10:35:30 by afarapon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ void			make_args(int c, char **av, t_localinfo *local, t_flags *fl)
 	size_t		i;
 	size_t		j;
 	STAT		tmp;
-	char		buf[NAME_SIZE];
 
 	local->flags = *fl;
 	local->errors = ft_strdup("");
@@ -59,7 +58,7 @@ void			make_args(int c, char **av, t_localinfo *local, t_flags *fl)
 		else
 		{
 			local->files[j].f_stat = tmp;
-			ft_strcpy(local->files[j].name, av[i]);
+			local->files[j].name = ft_strdup(av[i]);
 			j++;
 		}
 	}
@@ -117,7 +116,10 @@ void			without_att(int c, char **av, t_flags *fl)
 	t_localinfo		l;
 
 	ft_bzero(&l, sizeof(t_localinfo));
-	ft_get_lsflags(fl, c, av);
+	make_args(c, av, &l, fl);
+	if (fl->f_list && !fl->f_dis_lsg)
+		get_width_for_l(&l);
+	run_ls_att(&l);
 }
 
 int				main(int c,char **av)
