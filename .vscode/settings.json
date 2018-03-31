@@ -1,0 +1,7 @@
+{
+	"C_Cpp.intelliSenseEngineFallback": "Disabled",
+	"files.associations": {
+		"ft_ls.h": "c",
+		"time.h": "c"
+	}
+}
