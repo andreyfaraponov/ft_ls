@@ -6,7 +6,7 @@
 /*   By: afarapon <afarapon@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/30 14:50:25 by afarapon          #+#    #+#             */
-/*   Updated: 2018/03/31 11:42:32 by afarapon         ###   ########.fr       */
+/*   Updated: 2018/04/01 01:46:27 by afarapon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ static void			draw_permissions(struct stat s)
 	ft_printf("%s ", s.st_mode & S_IXOTH ? "x" : "-");
 }
 
-void				print_l_time(struct stat s, int time_flag)
+void				print_l_time(struct stat s, int time_flag, t_flags *fl)
 {
 	char		*tmp_time;
 	char		**split;
@@ -105,11 +105,9 @@ void				add_link_postfix(t_flags *fl, STAT s, char *fname, char *path)
 	if (full_path[ft_strlen(full_path) - 1] != '/')
 		ft_strcat(full_path, "/");
 	ft_strcat(full_path, fname);
-	// ft_printf("%s\n", full_path);
 	ft_bzero(buf, NAME_SIZE);
 	len = readlink(full_path, buf, NAME_SIZE);
 	buf[len] = '\0';
-	// ft_printf("%s\n", buf);
 	if (fl->f_colors)
 	{
 		ft_printf(COLOR_MAGENTA "%s", buf);
@@ -120,24 +118,51 @@ void				add_link_postfix(t_flags *fl, STAT s, char *fname, char *path)
 	free(full_path);
 }
 
+int				check_link(t_flags *fl, STAT s, char *fname, char *path)
+{
+	char			*full_path;
+	char			buf[NAME_SIZE];
+	char			*tmp;
+	ssize_t			len;
+
+	ft_printf(COLOR_RESET);
+	full_path = ft_strnew(ft_strlen(fname) + ft_strlen(path) + 1);
+	ft_strcat(full_path, path);
+	ft_strcat(full_path, fname);
+	ft_bzero(buf, NAME_SIZE);
+	len = readlink(full_path, buf, NAME_SIZE);
+	if (len == -1)
+		make_link_error(full_path);
+	free(full_path);
+	if (len == -1)
+		return (1);
+	return (0);
+}
+
 void			print_l_info(t_localinfo *l, struct stat s, char *fname, char *path)
 {
 	struct passwd	*u_name;
 	struct group	*g_name;
+	int				flag;
 
 	if (l->flags.f_colors)
 		ft_printf(COLOR_RESET);
+	if (S_ISLNK(s.st_mode) && check_link(&l->flags, s, fname, path))
+		flag = 1;
+	else
+		flag = 0;
 	file_l_letter(s);
 	draw_permissions(s);
 	u_name = getpwuid(s.st_uid);
 	g_name = getgrgid(s.st_gid);
 	ft_printf("%*u ", l->offsets[0], s.st_nlink);
-	ft_printf("%*s ", l->offsets[1], u_name->pw_name);
+	if (!l->flags.f_list_not_owner)
+		ft_printf("%*s ", l->offsets[1], u_name->pw_name);
 	ft_printf("%*s ", l->offsets[2], g_name->gr_name);
 	ft_printf("%*u ", l->offsets[3], s.st_size);
-	print_l_time(s, l->flags.f_sort_by_mod_time);
+	print_l_time(s, l->flags.f_sort_by_mod_time, &l->flags);
 	printf_file_name(&l->flags, s, fname);
-	if (S_ISLNK(s.st_mode))
+	if (!flag && S_ISLNK(s.st_mode))
 		add_link_postfix(&l->flags, s, fname, path);
 	ft_printf("\n");
 }

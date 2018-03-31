@@ -6,7 +6,7 @@
 /*   By: afarapon <afarapon@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/30 18:51:30 by afarapon          #+#    #+#             */
-/*   Updated: 2018/03/31 12:00:33 by afarapon         ###   ########.fr       */
+/*   Updated: 2018/04/01 01:54:15 by afarapon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,53 @@ void			sort_by_name_array(t_info *arr, unsigned int size)
 	}
 }
 
+void			sort_by_mtime(t_info *arr, unsigned int size)
+{
+	unsigned int	i;
+	unsigned int	j;
+	t_info			tmp;
+
+	i = -1;
+	while (++i < size)
+	{
+		j = i;
+		while (++j < size)
+		{
+			if (arr[i].f_stat.st_mtime > arr[j].f_stat.st_mtime)
+			{
+				tmp = arr[i];
+				arr[i] = arr[j];
+				arr[j] = tmp;
+			}
+		}
+	}
+}
+
+void			reverse_args(t_info *arr, unsigned int size)
+{
+	size_t		i;
+	t_info		tmp;
+
+	i = 0;
+	while (i < --size)
+	{
+		tmp = arr[i];
+		arr[i] = arr[size];
+		arr[size] = tmp;
+		i++;
+	}
+}
+
 void			sort_args(t_localinfo *local)
 {
-	sort_by_name_array(local->files, local->files_size);
+	if (!local->flags.f_dis_lsg)
+	{
+		sort_by_name_array(local->files, local->files_size);
+		if (local->flags.f_by_time)
+			sort_by_mtime(local->files, local->files_size);
+	}
+	if (local->flags.f_rever && local->files_size)
+		reverse_args(local->files, local->files_size);
 }
 
 static void		files_print(t_info file, t_flags *fl, t_localinfo *local)
@@ -81,12 +125,6 @@ static void		files_print(t_info file, t_flags *fl, t_localinfo *local)
 	}
 }
 
-void			directories_print(t_info file, t_flags *fl, t_localinfo *local)
-{
-	if (S_ISDIR(file.f_stat.st_mode))
-		open_and_print_dir(file, fl, local->files_size == 1 ? 1 : 0);
-}
-
 static int		check_for_files(t_localinfo *l)
 {
 	size_t		i;
@@ -98,21 +136,66 @@ static int		check_for_files(t_localinfo *l)
 	return (0);
 }
 
+int				is_any_dir(t_info *arr, int size)
+{
+	size_t		i;
+	size_t		count;
+
+	i = 0;
+	count = 0;
+	while (i < size)
+	{
+		if (S_ISDIR(arr[i].f_stat.st_mode))
+			count++;
+		i++;
+	}
+	if (count == size)
+		return (0);
+	while (i < size)
+	{
+		if (S_ISDIR(arr[i].f_stat.st_mode))
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
 void			run_ls_att(t_localinfo *local)
 {
 	size_t		i;
 
 	i = -1;
 	sort_args(local);
+	if (local->files_size == 1 && !local->flags.f_recur)
+		local->flags.no_name = 1;
 	print_errors(local->errors);
-	free(local->errors);
+	// free(local->errors);
 	while (++i < local->files_size)
 		files_print(local->files[i], &local->flags, local);
-	if (!local->flags.f_list && check_for_files(local))
+	if ((!local->flags.f_list && check_for_files(local)) || is_any_dir(local->files, local->files_size))
 		ft_printf("\n");
 	i = -1;
 	while (++i < local->files_size)
-		directories_print(local->files[i], &local->flags, local);
+	{
+		if (S_ISDIR(local->files[i].f_stat.st_mode) && !local->flags.f_just_dir)
+		{
+			if (i > 0)
+				ft_printf("\n");
+			open_and_print_dir(local->files[i], &local->flags, local->files_size == 1 ? 1 : 0);
+		}
+		else if (S_ISDIR(local->files[i].f_stat.st_mode) && local->flags.f_just_dir)
+		{
+			if (local->flags.f_list)
+				print_l_info(local, local->files[i].f_stat, local->files[i].name, local->files[i].full_path);
+			else
+			{
+				printf_file_name(&local->flags, local->files[i].f_stat, local->files[i].name);
+				ft_printf("%s", i < local->files_size ? "  " : "");
+			}
+		}
+		free(local->files[i].name);
+		free(local->files[i].full_path);
+	}
 	free(local->loc_path);
 	free(local->files);
 }

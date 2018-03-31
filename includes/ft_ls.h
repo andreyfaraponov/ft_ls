@@ -6,7 +6,7 @@
 /*   By: afarapon <afarapon@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 21:33:01 by afarapon          #+#    #+#             */
-/*   Updated: 2018/03/31 11:57:37 by afarapon         ###   ########.fr       */
+/*   Updated: 2018/04/01 01:01:52 by afarapon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ typedef struct		s_flags
 	short			f_list_not_owner;
 	short			f_dis_lsg;
 	short			f_sort_by_mod_time;
+	short			no_name;
 }					t_flags;
 
 typedef struct		s_localinfo
@@ -75,14 +76,15 @@ void			ft_free_strsplit(char **split);
 void			printf_file_name(t_flags *fl, struct stat s, char *fname);
 void			print_l_info(t_localinfo *l, struct stat s, char *fname, char *path);
 void			make_error(char *e_name, t_localinfo *l);
+int				make_permission_error(char *e_name);
 void			print_errors(char *errors);
 void			run_ls_att(t_localinfo *local);
 size_t			get_digit_len(size_t val);
 void			open_and_print_dir(t_info file, t_flags *fl, int is_one);
 void			sort_args(t_localinfo *local);
 void			get_width_for_l(t_localinfo *l);
-void			directories_print(t_info file, t_flags *fl, t_localinfo *local);
 void			clear_t_localinfo(t_localinfo *info);
+int				make_link_error(char *name);
 
 
 #endif

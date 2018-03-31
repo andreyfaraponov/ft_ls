@@ -6,7 +6,7 @@
 /*   By: afarapon <afarapon@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/31 09:05:50 by afarapon          #+#    #+#             */
-/*   Updated: 2018/03/31 11:57:21 by afarapon         ###   ########.fr       */
+/*   Updated: 2018/04/01 01:13:23 by afarapon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,11 @@ void			add_argument(t_localinfo *l, char *file, char *full)
 	t_info		res;
 
 	i = -1;
+	if (lstat(full, &tmp) && make_link_error(full))
+		return ;
 	new_arr = (t_info*)malloc(sizeof(t_info) * (l->files_size + 1));
 	while (++i < l->files_size)
 		new_arr[i] = l->files[i];
-	lstat(full, &tmp);
 	res.f_stat = tmp;
 	res.name = ft_strdup(file);
 	res.full_path = full;
@@ -42,9 +43,7 @@ unsigned int	get_total_blocks_size(t_localinfo *l)
 	res = 0;
 	i = -1;
 	while (++i < l->files_size)
-	{
 		res += l->files[i].f_stat.st_blocks;
-	}
 	return (res);
 }
 
@@ -59,28 +58,30 @@ void			open_and_print_dir(t_info file, t_flags *fl, int is_one)
 	ft_bzero(&l, sizeof(t_localinfo));
 	l.flags = *fl;
 	dir = opendir(file.full_path);
-	if (!dir)
+	if (!dir && make_permission_error(file.full_path))
 		return ;
+	if (!l.flags.no_name)
+		ft_printf(COLOR_RESET "%s:\n", file.full_path);
 	while (dd = readdir(dir))
 	{
 		if (dd->d_name[0] == '.' && fl->f_all)
 		{
-			if (file.name[ft_strlen(file.name) - 1] != '/')
-				tmp = ft_strjoin(file.name, "/");
+			if (file.full_path[ft_strlen(file.full_path) - 1] != '/')
+				tmp = ft_strjoin(file.full_path, "/");
 			else
-				tmp = file.name;
+				tmp = file.full_path;
 			add_argument(&l, dd->d_name, ft_strjoin(tmp, dd->d_name));
 			if (file.name[ft_strlen(file.name) - 1] != '/')
 				free(tmp);
 		}
 		else if (dd->d_name[0] != '.' && ft_strcmp(dd->d_name, ".."))
 		{
-			if (file.name[ft_strlen(file.name) - 1] != '/')
-				tmp = ft_strjoin(file.name, "/");
+			if (file.full_path[ft_strlen(file.full_path) - 1] != '/')
+				tmp = ft_strjoin(file.full_path, "/");
 			else
-				tmp = file.name;
+				tmp = file.full_path;
 			add_argument(&l, dd->d_name, ft_strjoin(tmp, dd->d_name));
-			if (file.name[ft_strlen(file.name) - 1] != '/')
+			if (file.full_path[ft_strlen(file.full_path) - 1] != '/')
 				free(tmp);
 		}
 	}
@@ -88,16 +89,16 @@ void			open_and_print_dir(t_info file, t_flags *fl, int is_one)
 	sort_args(&l);
 	get_width_for_l(&l);
 	if (l.flags.f_list)
-		ft_printf("total %u\n", get_total_blocks_size(&l));
+		ft_printf("total %u\n", get_total_blocks_size(&l) / 2);
 	i = -1;
 	while (++i < l.files_size)
 	{
 		if (l.flags.f_list)
-			print_l_info(&l, l.files[i].f_stat, l.files[i].name, file.name);
+			print_l_info(&l, l.files[i].f_stat, l.files[i].name, file.full_path);
 		else
 		{
 			printf_file_name(&l.flags, l.files[i].f_stat, l.files[i].name);
-			ft_printf("\t");
+			ft_printf("%s", (i + 1) == l.files_size ? "" : "  ");
 		}
 	}
 	if (!l.flags.f_list)
@@ -107,12 +108,11 @@ void			open_and_print_dir(t_info file, t_flags *fl, int is_one)
 		i = -1;
 		while (++i < l.files_size)
 		{
-			if (S_ISDIR(l.files[i].f_stat.st_mode))
+			if (ft_strcmp(".", l.files[i].name) && ft_strcmp("..", l.files[i].name) && S_ISDIR(l.files[i].f_stat.st_mode))
 			{
-				if (i > 0)
-					ft_printf("\n");
-				ft_printf(COLOR_RESET "%s:\n", l.files[i].name);
-				directories_print(l.files[i], &l.flags, &l);
+
+				ft_printf("\n");
+				open_and_print_dir(l.files[i], &l.flags, 0);
 			}
 		}
 	}

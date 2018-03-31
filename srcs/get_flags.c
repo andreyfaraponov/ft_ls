@@ -6,7 +6,7 @@
 /*   By: afarapon <afarapon@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/30 00:01:13 by afarapon          #+#    #+#             */
-/*   Updated: 2018/03/30 00:17:01 by afarapon         ###   ########.fr       */
+/*   Updated: 2018/04/01 00:17:26 by afarapon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ static void		ft_after_flags_control(t_flags *fl)
 	{
 		fl->f_list = 0;
 		fl->f_list_not_owner = 0;
+		fl->f_all = 1;
 	}
 }
 
@@ -88,5 +89,4 @@ void			ft_get_lsflags(t_flags *fl, int c, char **v)
 		i++;
 	}
 	ft_after_flags_control(fl);
-	ft_print_flags(fl);
 }

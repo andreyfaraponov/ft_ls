@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afarapon <afarapon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afarapon <afarapon@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/28 16:20:21 by afarapon          #+#    #+#             */
-/*   Updated: 2018/01/24 19:27:50 by afarapon         ###   ########.fr       */
+/*   Updated: 2018/03/31 21:56:14 by afarapon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 # include <string.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <stdio.h>
 
 void				*ft_memset(void *s, int c, size_t n);
 void				*ft_memcpy(void *dest, const void *src, size_t n);
