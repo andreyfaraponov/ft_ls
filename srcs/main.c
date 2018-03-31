@@ -6,7 +6,7 @@
 /*   By: afarapon <afarapon@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 21:32:41 by afarapon          #+#    #+#             */
-/*   Updated: 2018/03/31 10:35:30 by afarapon         ###   ########.fr       */
+/*   Updated: 2018/03/31 11:58:39 by afarapon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ void			make_args(int c, char **av, t_localinfo *local, t_flags *fl)
 		{
 			local->files[j].f_stat = tmp;
 			local->files[j].name = ft_strdup(av[i]);
+			local->files[j].full_path = ft_strdup(av[i]);
 			j++;
 		}
 	}

@@ -6,7 +6,7 @@
 /*   By: afarapon <afarapon@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/30 14:50:25 by afarapon          #+#    #+#             */
-/*   Updated: 2018/03/31 09:17:13 by afarapon         ###   ########.fr       */
+/*   Updated: 2018/03/31 11:42:32 by afarapon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,18 +94,22 @@ void				print_l_time(struct stat s, int time_flag)
 
 void				add_link_postfix(t_flags *fl, STAT s, char *fname, char *path)
 {
+	char			*full_path;
 	char			buf[NAME_SIZE];
-	char			buf2[NAME_SIZE * 2];
+	char			*tmp;
 	ssize_t			len;
 
 	ft_printf(COLOR_RESET " -> ");
-	ft_bzero(buf2, NAME_SIZE * 2);
-	ft_strcat(buf2, path);
-	if (buf2[ft_strlen(buf2) - 1] != '/')
-		ft_strcat(buf2, "/");
-	ft_strcat(buf2, fname);
-	len = readlink(buf2, buf, NAME_SIZE);
+	full_path = ft_strnew(ft_strlen(fname) + ft_strlen(path) + 1);
+	ft_strcat(full_path, path);
+	if (full_path[ft_strlen(full_path) - 1] != '/')
+		ft_strcat(full_path, "/");
+	ft_strcat(full_path, fname);
+	// ft_printf("%s\n", full_path);
+	ft_bzero(buf, NAME_SIZE);
+	len = readlink(full_path, buf, NAME_SIZE);
 	buf[len] = '\0';
+	// ft_printf("%s\n", buf);
 	if (fl->f_colors)
 	{
 		ft_printf(COLOR_MAGENTA "%s", buf);
@@ -113,6 +117,7 @@ void				add_link_postfix(t_flags *fl, STAT s, char *fname, char *path)
 	}
 	else
 		ft_printf("%s", buf);
+	free(full_path);
 }
 
 void			print_l_info(t_localinfo *l, struct stat s, char *fname, char *path)

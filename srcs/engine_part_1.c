@@ -6,7 +6,7 @@
 /*   By: afarapon <afarapon@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/30 18:51:30 by afarapon          #+#    #+#             */
-/*   Updated: 2018/03/31 10:33:10 by afarapon         ###   ########.fr       */
+/*   Updated: 2018/03/31 12:00:33 by afarapon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,10 +84,7 @@ static void		files_print(t_info file, t_flags *fl, t_localinfo *local)
 void			directories_print(t_info file, t_flags *fl, t_localinfo *local)
 {
 	if (S_ISDIR(file.f_stat.st_mode))
-	{
-		ft_printf("Dir %s\n", file.name);
-		open_and_print_dir(file.name, fl, local->files_size == 1 ? 1 : 0);
-	}
+		open_and_print_dir(file, fl, local->files_size == 1 ? 1 : 0);
 }
 
 static int		check_for_files(t_localinfo *l)

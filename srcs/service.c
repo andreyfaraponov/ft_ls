@@ -6,7 +6,7 @@
 /*   By: afarapon <afarapon@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/30 01:14:15 by afarapon          #+#    #+#             */
-/*   Updated: 2018/03/30 23:56:53 by afarapon         ###   ########.fr       */
+/*   Updated: 2018/03/31 11:53:42 by afarapon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,4 +36,18 @@ size_t			get_digit_len(size_t val)
 		res++;
 	}
 	return (res);
+
+}
+
+void			clear_t_localinfo(t_localinfo *info)
+{
+	size_t		i;
+
+	i = -1;
+	while (++i < info->files_size)
+	{
+		free(info->files[i].full_path);
+		free(info->files[i].name);
+	}
+	free(info->files);
 }

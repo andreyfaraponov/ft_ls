@@ -6,7 +6,7 @@
 /*   By: afarapon <afarapon@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 21:33:01 by afarapon          #+#    #+#             */
-/*   Updated: 2018/03/31 10:30:15 by afarapon         ###   ########.fr       */
+/*   Updated: 2018/03/31 11:57:37 by afarapon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ typedef struct		s_info
 	STAT			f_stat;
 	short			is_error;
 	char			*name;
+	char			*full_path;
 }					t_info;
 
 typedef struct		s_flags
@@ -77,10 +78,11 @@ void			make_error(char *e_name, t_localinfo *l);
 void			print_errors(char *errors);
 void			run_ls_att(t_localinfo *local);
 size_t			get_digit_len(size_t val);
-void			open_and_print_dir(char *name, t_flags *fl, int is_one);
+void			open_and_print_dir(t_info file, t_flags *fl, int is_one);
 void			sort_args(t_localinfo *local);
 void			get_width_for_l(t_localinfo *l);
 void			directories_print(t_info file, t_flags *fl, t_localinfo *local);
+void			clear_t_localinfo(t_localinfo *info);
 
 
 #endif
