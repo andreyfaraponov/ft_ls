@@ -1,1 +1,0 @@
-ls: App Store.app: Permission denied

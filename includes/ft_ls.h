@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_ls.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afarapon <afarapon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afarapon <afarapon@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 21:33:01 by afarapon          #+#    #+#             */
-/*   Updated: 2018/04/01 13:11:25 by afarapon         ###   ########.fr       */
+/*   Updated: 2018/04/02 00:29:56 by afarapon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,14 +78,16 @@ void			print_l_info(t_localinfo *l, struct stat s, char *fname, char *path);
 void			make_error(char *e_name, t_localinfo *l);
 int				make_permission_error(char *e_name);
 void			print_errors(char *errors);
-void			run_ls_att(t_localinfo *local);
+void			run_ls(t_localinfo *local);
 size_t			get_digit_len(size_t val);
-void			open_and_print_dir(t_info file, t_flags *fl, int is_one);
+void			open_and_print_dir(t_info file, t_flags *fl);
 void			sort_args(t_localinfo *local);
 void			get_width_for_l(t_localinfo *l);
 void			clear_t_localinfo(t_localinfo *info);
 int				make_link_error(char *name);
 int				make_flag_error(char sign);
+void			print_permissions(struct stat s);
+void			sort_args(t_localinfo *local);
 
 
 #endif

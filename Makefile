@@ -3,18 +3,16 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: afarapon <afarapon@student.42.fr>          +#+  +:+       +#+         #
+#    By: afarapon <afarapon@student.unit.ua>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/02/09 01:17:41 by afarapon          #+#    #+#              #
-#    Updated: 2018/04/01 15:39:02 by afarapon         ###   ########.fr        #
+#    Updated: 2018/04/02 01:11:42 by afarapon         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = ft_ls
 
-CC = gcc -g
-
-KEYS = -Wall -Wextra -Werror
+CC = gcc -g -Wall -Wextra -Werror
 
 IDIR = ./includes
 
@@ -29,9 +27,11 @@ SRC = \
 	get_flags.c \
 	service.c \
 	print_info.c \
-	engine_part_1.c \
+	ft_ls_engine.c \
 	error_handle.c \
 	print_directory.c \
+	sorts.c \
+	print_permissions.c \
 	
 _OBJ = $(SRC:%.c=%.o)
 
@@ -53,7 +53,6 @@ all: $(NAME)
 $(NAME): $(LIBFT) $(OBJ)
 		cp libft/libft.a ./$(NAME)
 		$(CC) -o $(NAME) $(OBJ) libft/libft.a -fsanitize=address
-
 $(LIBFT):
 	make -C $(LIBDIR)
 
