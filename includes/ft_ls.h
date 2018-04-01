@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_ls.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afarapon <afarapon@student.unit.ua>        +#+  +:+       +#+        */
+/*   By: afarapon <afarapon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 21:33:01 by afarapon          #+#    #+#             */
-/*   Updated: 2018/04/01 01:01:52 by afarapon         ###   ########.fr       */
+/*   Updated: 2018/04/01 13:11:25 by afarapon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # include <limits.h>
 # include <sys/ioctl.h>
 # include <unistd.h>
-# include "libft.h"
+# include "../libft/libft.h"
 # define COLOR_RED			"\x1b[31m"
 # define COLOR_GREEN		"\x1b[32m"
 # define COLOR_BOLD_GREEN	"\x1b[32;1m"
@@ -85,6 +85,7 @@ void			sort_args(t_localinfo *local);
 void			get_width_for_l(t_localinfo *l);
 void			clear_t_localinfo(t_localinfo *info);
 int				make_link_error(char *name);
+int				make_flag_error(char sign);
 
 
 #endif

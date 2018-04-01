@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error_handle.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afarapon <afarapon@student.unit.ua>        +#+  +:+       +#+        */
+/*   By: afarapon <afarapon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/30 23:55:43 by afarapon          #+#    #+#             */
-/*   Updated: 2018/04/01 01:01:10 by afarapon         ###   ########.fr       */
+/*   Updated: 2018/04/01 15:25:35 by afarapon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ void			print_errors(char *errors)
 {
 	if (ft_strlen(errors))
 		ft_putstr_fd(errors, 2);
-	free(errors);
 }
 
 void			make_error(char *e_name, t_localinfo *l)
@@ -48,4 +47,12 @@ int				make_link_error(char *name)
 	ft_putstr_fd(name, 2);
 	ft_putstr_fd("': Permission denied\n", 2);
 	return (1);
+}
+
+int				make_flag_error(char sign)
+{
+	ft_putstr_fd("ft_ls: illegal option -- ", 2);
+	ft_putchar_fd(sign, 2);
+	ft_putstr_fd("\nusage: ls [-agGdfltrR] [file ...]\n", 2);
+	exit(1);
 }

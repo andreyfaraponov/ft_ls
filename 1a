@@ -1,0 +1,23 @@
+total 0
+drwxr-xr-x  4 afarapon  2017  136 Apr  1 12:49 ddd
+
+zzz/ddd:
+total 0
+drwxr-xr-x  5 afarapon  2017  170 Apr  1 12:49 ccc
+-rw-r--r--  1 afarapon  2017    0 Apr  1 12:23 oppa
+
+zzz/ddd/ccc:
+total 0
+drwxr-xr-x  2 afarapon  2017   68 Apr  1 12:49 111
+drwxr-xr-x  2 afarapon  2017   68 Apr  1 12:49 222
+drwxr-xr-x  5 afarapon  2017  170 Apr  1 12:49 333
+
+zzz/ddd/ccc/111:
+
+zzz/ddd/ccc/222:
+
+zzz/ddd/ccc/333:
+total 0
+-rw-r--r--  1 afarapon  2017  0 Apr  1 12:49 aaa
+-rw-r--r--  1 afarapon  2017  0 Apr  1 12:49 bbb
+-rw-r--r--  1 afarapon  2017  0 Apr  1 12:49 ccc

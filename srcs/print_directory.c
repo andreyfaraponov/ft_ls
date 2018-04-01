@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   print_directory.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afarapon <afarapon@student.unit.ua>        +#+  +:+       +#+        */
+/*   By: afarapon <afarapon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/31 09:05:50 by afarapon          #+#    #+#             */
-/*   Updated: 2018/04/01 01:13:23 by afarapon         ###   ########.fr       */
+/*   Updated: 2018/04/01 14:32:16 by afarapon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void			open_and_print_dir(t_info file, t_flags *fl, int is_one)
 		return ;
 	if (!l.flags.no_name)
 		ft_printf(COLOR_RESET "%s:\n", file.full_path);
-	while (dd = readdir(dir))
+	while ((dd = readdir(dir)))
 	{
 		if (dd->d_name[0] == '.' && fl->f_all)
 		{
@@ -88,8 +88,8 @@ void			open_and_print_dir(t_info file, t_flags *fl, int is_one)
 	closedir(dir);
 	sort_args(&l);
 	get_width_for_l(&l);
-	if (l.flags.f_list)
-		ft_printf("total %u\n", get_total_blocks_size(&l) / 2);
+	if (l.flags.f_list && l.files_size)
+		ft_printf("total %u\n", get_total_blocks_size(&l));
 	i = -1;
 	while (++i < l.files_size)
 	{

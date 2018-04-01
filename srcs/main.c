@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afarapon <afarapon@student.unit.ua>        +#+  +:+       +#+        */
+/*   By: afarapon <afarapon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 21:32:41 by afarapon          #+#    #+#             */
-/*   Updated: 2018/04/01 01:02:38 by afarapon         ###   ########.fr       */
+/*   Updated: 2018/04/01 15:46:03 by afarapon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,35 +37,48 @@ int				check_errors(int first, int all, char **av, t_localinfo *local)
 	return (res);
 }
 
-void			make_args(int c, char **av, t_localinfo *local, t_flags *fl)
+void			make_args(int c, char **av, t_localinfo *local)
 {
 	size_t		i;
 	size_t		j;
 	STAT		tmp;
+	int			flag;
 
-	local->flags = *fl;
-	local->errors = ft_strdup("");
-	local->files_size = c - 1;
-	local->files_size -= check_errors(1, c, av, local);
-	local->files = (t_info*)malloc(sizeof(t_info) * (local->files_size > 0 ? local->files_size : 1));
+	// local->files_size = c - 1;
+	// local->files_size -= check_errors(1, c, av, local);
+	// local->files = (t_info*)malloc(sizeof(t_info) * (local->files_size > 0 ? local->files_size : 1));
 	i = 0;
 	j = 0;
-	local->loc_path = ft_strdup("");
+	flag = 0;
+	local->loc_path = ft_strdup(".");
 	while (++i < c)
 	{
-		if (lstat(av[i], &tmp))
+		if (!flag && av[i][0] == '-' && ft_strcmp("--", av[i]))
 			continue ;
-		else
+		else if (!flag || (!ft_strcmp("--", av[i]) && (flag = 1)))
+		{
+			local->files_size = c - i;
+			local->files = (t_info*)malloc(sizeof(t_info) * local->files_size);
+			flag = 1;
+			continue ;
+		}
+		// if (lstat(av[i], &tmp))
+		// 	continue ;
+		if (flag && !lstat(av[i], &tmp))
 		{
 			local->files[j].f_stat = tmp;
 			local->files[j].name = ft_strdup(av[i]);
 			local->files[j].full_path = ft_strdup(av[i]);
 			j++;
 		}
+		else
+		{
+			local->files_size--;
+			make_error(av[i], local);
+		}
 	}
-	if ((c == 1 || !local->files_size) && !ft_strlen(local->errors))
+	if (c == 1 || !local->files_size)
 	{
-		// ft_printf("res: %d\n", lstat(".", &tmp));
 		lstat(".", &tmp);
 		local->files[0].f_stat = tmp;
 		local->files[0].name = ft_strdup(".");
@@ -102,8 +115,11 @@ void			first_start(int c, char **av, t_flags *fl)
 	t_localinfo		l;
 
 	ft_bzero(&l, sizeof(t_localinfo));
-	make_args(c, av, &l, fl);
-	if (fl->f_list && !fl->f_dis_lsg)
+	ft_get_lsflags(fl, c, av);
+	l.flags = *fl;
+	l.errors = ft_strdup("");
+	make_args(c, av, &l);
+	if (fl->f_list)
 		get_width_for_l(&l);
 	run_ls_att(&l);
 }
@@ -113,7 +129,6 @@ int				main(int c,char **av)
 	t_flags		fl;
 
 	ft_bzero(&fl, sizeof(t_flags));
-	ft_get_lsflags(&fl, c, av);
 	first_start(c, av, &fl);
 	return (0);
 }

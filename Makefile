@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: afarapon <afarapon@student.unit.ua>        +#+  +:+       +#+         #
+#    By: afarapon <afarapon@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/02/09 01:17:41 by afarapon          #+#    #+#              #
-#    Updated: 2018/03/31 23:15:33 by afarapon         ###   ########.fr        #
+#    Updated: 2018/04/01 15:39:02 by afarapon         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,13 +27,10 @@ SRCDIR = srcs
 SRC = \
 	main.c \
 	get_flags.c \
-	get_paths_files.c \
 	service.c \
 	print_info.c \
 	engine_part_1.c \
-	engine_part_2.c \
 	error_handle.c \
-	print_file.c \
 	print_directory.c \
 	
 _OBJ = $(SRC:%.c=%.o)

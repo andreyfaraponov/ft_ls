@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   print_info.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afarapon <afarapon@student.unit.ua>        +#+  +:+       +#+        */
+/*   By: afarapon <afarapon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/30 14:50:25 by afarapon          #+#    #+#             */
-/*   Updated: 2018/04/01 01:46:27 by afarapon         ###   ########.fr       */
+/*   Updated: 2018/04/01 14:32:49 by afarapon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,13 @@ void				printf_file_name(t_flags *fl, struct stat s, char *fname)
 		if (S_ISLNK(s.st_mode))
 			ft_printf(COLOR_MAGENTA);
 		else if (S_ISDIR(s.st_mode))
-			ft_printf(COLOR_BOLD_CYAN); // OK
+			ft_printf(COLOR_BOLD_CYAN);
 		else if (S_ISCHR(s.st_mode))
 			ft_printf(COLOR_GREEN);
 		else if (S_ISBLK(s.st_mode))
 			ft_printf(COLOR_BOLD_GREEN);
 		else if (S_ISFIFO(s.st_mode))
-			ft_printf(COLOR_YELLOW); // OK
+			ft_printf(COLOR_YELLOW);
 		else if (S_ISSOCK(s.st_mode))
 			ft_printf(COLOR_BLUE);
 	}
@@ -50,17 +50,96 @@ static void			file_l_letter(struct stat s)
 		ft_printf("%s", "-");
 }
 
-static void			draw_permissions(struct stat s)
+void				draw_user_x(STAT s)
+{
+	mode_t			st_mode;
+
+	st_mode = s.st_mode;
+	if (st_mode & S_IRWXU && st_mode & S_ISUID)
+	{
+		if (st_mode & S_ISUID && st_mode & S_IXUSR)
+			ft_printf("s");
+		else if (st_mode & S_ISUID && !(st_mode & S_IXUSR))
+			ft_printf("S");
+		else
+			ft_printf("x");
+	}
+	else
+	{
+		if (st_mode & S_IXUSR)
+			ft_printf("x");
+		else if (st_mode & S_ISUID && st_mode & S_IXUSR)
+			ft_printf("s");
+		else if (st_mode & S_ISUID && !(st_mode & S_IXUSR))
+			ft_printf("S");
+		else
+			ft_printf("-");
+	}
+}
+void				draw_group_x(STAT s)
+{
+	mode_t			st_mode;
+
+	st_mode = s.st_mode;
+	if (st_mode & S_IRWXG && st_mode & S_ISGID)
+	{
+		if (st_mode & S_ISGID && st_mode & S_IXGRP)
+			ft_printf("s");
+		else if (st_mode & S_ISGID && !(st_mode & S_IXGRP))
+			ft_printf("S");
+		else
+			ft_printf("x");
+	}
+	else
+	{
+		if (st_mode & S_IXGRP)
+			ft_printf("x");
+		else if (st_mode & S_ISGID && st_mode & S_IXGRP)
+			ft_printf("s");
+		else if (st_mode & S_ISGID && !(st_mode & S_IXGRP))
+			ft_printf("S");
+		else
+			ft_printf("-");
+	}
+}
+void				draw_other_x(STAT s)
+{
+	mode_t			st_mode;
+
+	st_mode = s.st_mode;
+	if (st_mode & S_IRWXO && st_mode & S_ISVTX)
+	{
+		if (st_mode & S_ISVTX && st_mode & S_IXOTH)
+			ft_printf("t");
+		else if (st_mode & S_ISVTX && !(st_mode & S_IXOTH))
+			ft_printf("T");
+		else
+			ft_printf("x");
+	}
+	else
+	{
+		if (st_mode & S_IXOTH)
+			ft_printf("x");
+		else if (st_mode & S_ISVTX && st_mode & S_IXOTH)
+			ft_printf("t");
+		else if (st_mode & S_ISVTX && !(st_mode & S_IXOTH))
+			ft_printf("T");
+		else
+			ft_printf("-");
+	}
+}
+
+static void			draw_permissions(STAT s)
 {
 	ft_printf("%s", s.st_mode & S_IRUSR ? "r" : "-");
 	ft_printf("%s", s.st_mode & S_IWUSR ? "w" : "-");
-	ft_printf("%s", s.st_mode & S_IXUSR ? "x" : "-");
+	draw_user_x(s);
 	ft_printf("%s", s.st_mode & S_IRGRP ? "r" : "-");
 	ft_printf("%s", s.st_mode & S_IWGRP ? "w" : "-");
-	ft_printf("%s", s.st_mode & S_IXGRP ? "x" : "-");
+	draw_group_x(s);
 	ft_printf("%s", s.st_mode & S_IROTH ? "r" : "-");
 	ft_printf("%s", s.st_mode & S_IWOTH ? "w" : "-");
-	ft_printf("%s ", s.st_mode & S_IXOTH ? "x" : "-");
+	draw_other_x(s);
 }
 
 void				print_l_time(struct stat s, int time_flag, t_flags *fl)
@@ -68,7 +147,7 @@ void				print_l_time(struct stat s, int time_flag, t_flags *fl)
 	char		*tmp_time;
 	char		**split;
 	char		**split2;
-	size_t		cur_time;
+	time_t		cur_time;
 	size_t		i;
 
 	time(&cur_time);
@@ -128,6 +207,8 @@ int				check_link(t_flags *fl, STAT s, char *fname, char *path)
 	ft_printf(COLOR_RESET);
 	full_path = ft_strnew(ft_strlen(fname) + ft_strlen(path) + 1);
 	ft_strcat(full_path, path);
+	if (full_path[ft_strlen(full_path) - 1] != '/')
+		ft_strcat(full_path, "/");
 	ft_strcat(full_path, fname);
 	ft_bzero(buf, NAME_SIZE);
 	len = readlink(full_path, buf, NAME_SIZE);
@@ -155,11 +236,14 @@ void			print_l_info(t_localinfo *l, struct stat s, char *fname, char *path)
 	draw_permissions(s);
 	u_name = getpwuid(s.st_uid);
 	g_name = getgrgid(s.st_gid);
-	ft_printf("%*u ", l->offsets[0], s.st_nlink);
+	ft_printf("%*u ", l->offsets[0] + 2, s.st_nlink);
 	if (!l->flags.f_list_not_owner)
 		ft_printf("%*s ", l->offsets[1], u_name->pw_name);
-	ft_printf("%*s ", l->offsets[2], g_name->gr_name);
-	ft_printf("%*u ", l->offsets[3], s.st_size);
+	ft_printf("%*s ", l->offsets[2] + 1, g_name->gr_name);
+	if (S_ISBLK(s.st_mode) || S_ISCHR(s.st_mode))
+		ft_printf("%*u, %*u ",  l->offsets[3] + 1, s.st_rdev >> 24 & 0xff,  l->offsets[3] + 1, s.st_rdev & 0xffffff);
+	else
+		ft_printf("%*u ", l->offsets[3] + 1, s.st_size);
 	print_l_time(s, l->flags.f_sort_by_mod_time, &l->flags);
 	printf_file_name(&l->flags, s, fname);
 	if (!flag && S_ISLNK(s.st_mode))

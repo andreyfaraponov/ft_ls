@@ -3,40 +3,40 @@
 /*                                                        :::      ::::::::   */
 /*   engine_part_1.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afarapon <afarapon@student.unit.ua>        +#+  +:+       +#+        */
+/*   By: afarapon <afarapon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/30 18:51:30 by afarapon          #+#    #+#             */
-/*   Updated: 2018/04/01 01:54:15 by afarapon         ###   ########.fr       */
+/*   Updated: 2018/04/01 15:17:04 by afarapon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_ls.h"
 
-int				ft_all_strcmp(char *s1, char *s2)
-{
-	size_t		i;
-	char		*r1;
-	char		*r2;
-	size_t		len;
-	int			res;
+// int				ft_all_strcmp(char *s1, char *s2)
+// {
+// 	size_t		i;
+// 	char		*r1;
+// 	char		*r2;
+// 	size_t		len;
+// 	int			res;
 
-	i = -1;
-	r1 = ft_strdup(s1);
-	r2 = ft_strdup(s2);
-	len = ft_strlen(r1);
-	while (++i < len)
-		if (r1[i] >= 'A' && r1[i] <= 'Z')
-			r1[i] = ft_tolower(r1[i]);
-	i = -1;
-	len = ft_strlen(r2);
-	while (++i < len)
-		if (r2[i] >= 'A' && r2[i] <= 'Z')
-			r2[i] = ft_tolower(r2[i]);
-	res = ft_strcmp(r1, r2);
-	free(r1);
-	free(r2);
-	return (res);
-}
+// 	i = -1;
+// 	r1 = ft_strdup(s1);
+// 	r2 = ft_strdup(s2);
+// 	len = ft_strlen(r1);
+// 	while (++i < len)
+// 		if (r1[i] >= 'A' && r1[i] <= 'Z')
+// 			r1[i] = ft_tolower(r1[i]);
+// 	i = -1;
+// 	len = ft_strlen(r2);
+// 	while (++i < len)
+// 		if (r2[i] >= 'A' && r2[i] <= 'Z')
+// 			r2[i] = ft_tolower(r2[i]);
+// 	res = ft_strcmp(r1, r2);
+// 	free(r1);
+// 	free(r2);
+// 	return (res);
+// }
 
 void			sort_by_name_array(t_info *arr, unsigned int size)
 {
@@ -50,7 +50,7 @@ void			sort_by_name_array(t_info *arr, unsigned int size)
 		j = i;
 		while (++j < size)
 		{
-			if (ft_all_strcmp(arr[i].name, arr[j].name) > 0)
+			if (ft_strcmp(arr[i].name, arr[j].name) > 0)
 			{
 				tmp = arr[i];
 				arr[i] = arr[j];
@@ -71,14 +71,19 @@ void			sort_by_mtime(t_info *arr, unsigned int size)
 	{
 		j = i;
 		while (++j < size)
-		{
-			if (arr[i].f_stat.st_mtime > arr[j].f_stat.st_mtime)
+			if (arr[i].f_stat.st_mtime < arr[j].f_stat.st_mtime)
 			{
 				tmp = arr[i];
 				arr[i] = arr[j];
 				arr[j] = tmp;
 			}
-		}
+			else if (arr[i].f_stat.st_mtime == arr[j].f_stat.st_mtime &&
+				ft_strcmp(arr[i].name, arr[j].name) > 0)
+			{
+				tmp = arr[i];
+				arr[i] = arr[j];
+				arr[j] = tmp;
+			}
 	}
 }
 
@@ -117,11 +122,8 @@ static void		files_print(t_info file, t_flags *fl, t_localinfo *local)
 			print_l_info(local, file.f_stat,
 				file.name, local->loc_path);
 		else
-		{
 			printf_file_name(&local->flags, file.f_stat,
 				file.name);
-			ft_printf("\t");
-		}
 	}
 }
 
@@ -169,9 +171,14 @@ void			run_ls_att(t_localinfo *local)
 	if (local->files_size == 1 && !local->flags.f_recur)
 		local->flags.no_name = 1;
 	print_errors(local->errors);
-	// free(local->errors);
+	if (ft_strlen(local->errors) && local->files_size)
+		ft_printf("\n%s:\n", local->loc_path);
+	free(local->errors);
 	while (++i < local->files_size)
+	{
 		files_print(local->files[i], &local->flags, local);
+		ft_printf("%s", (i + 1) == local->files_size ? "" : "  ");
+	}
 	if ((!local->flags.f_list && check_for_files(local)) || is_any_dir(local->files, local->files_size))
 		ft_printf("\n");
 	i = -1;
@@ -181,7 +188,7 @@ void			run_ls_att(t_localinfo *local)
 		{
 			if (i > 0)
 				ft_printf("\n");
-			open_and_print_dir(local->files[i], &local->flags, local->files_size == 1 ? 1 : 0);
+			open_and_print_dir(local->files[i], &local->flags, local->files_size == 1 && !ft_strlen(local->errors) ? 1 : 0);
 		}
 		else if (S_ISDIR(local->files[i].f_stat.st_mode) && local->flags.f_just_dir)
 		{

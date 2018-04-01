@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_flags.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afarapon <afarapon@student.unit.ua>        +#+  +:+       +#+        */
+/*   By: afarapon <afarapon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/30 00:01:13 by afarapon          #+#    #+#             */
-/*   Updated: 2018/04/01 00:17:26 by afarapon         ###   ########.fr       */
+/*   Updated: 2018/04/01 15:29:25 by afarapon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,16 +32,14 @@ static void		ft_get_one_flag(t_flags *fl, char sign)
 		fl->f_list_not_owner = 1;
 	else if (sign == 'd')
 		fl->f_just_dir = 1;
+	else
+		make_flag_error(sign);
 }
 
 static void		ft_after_flags_control(t_flags *fl)
 {
 	if (fl->f_dis_lsg)
-	{
-		fl->f_list = 0;
-		fl->f_list_not_owner = 0;
 		fl->f_all = 1;
-	}
 }
 
 
@@ -84,9 +82,12 @@ void			ft_get_lsflags(t_flags *fl, int c, char **v)
 	i = 1;
 	while (i < c)
 	{
-		if (v[i][0] == '-')
+		if (v[i][0] == '-' && ft_strcmp("--", v[i]))
 			ft_parse_flags(fl, v[i]);
+		else
+			break ;
 		i++;
 	}
 	ft_after_flags_control(fl);
+	ft_print_flags(fl);
 }
